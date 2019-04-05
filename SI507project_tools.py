@@ -20,20 +20,23 @@ def scrape_function(some_url):
         PROGRAM_CACHE.set(some_url, data)
     return data
 
+# scrape main page and turn data into BeautifulSoup object
 main_page = scrape_function(START_URL)
-
 soup = BeautifulSoup(main_page, features="html.parser")
 
+# find_all a tag data from table on main page
 pres_table = soup.find(id="block-mainpagecontent")
-# print(pres_table)
-a_tags_list = soup.find_all('a', href=True)
-count = 0
-for item in a_tags_list:
-    if count == 47:
-        break
-    else:
-        print ("Found the URL:", item['href'])
-        count += 1
+a_tags_list = soup.find_all('a', href=True)[3:47]
+
+# create crawl links using main mage URL and a tag href_values
+crawl_links = []
+for a_tag in a_tags_list:
+    href_value = a_tag["href"]
+    link = f'https://millercenter.org{href_value}'
+    crawl_links.append(link)
+
+print (crawl_links)
+
 #
 # with open("example_csv_table.csv", "w", newline="") as example_fh:
 #     writer = csv.writer(example_fh)
