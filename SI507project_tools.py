@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy # handles database stuff for us - need t
 #Constants
 FNAME = "example_json_file.json"
 START_URL = "https://millercenter.org/president"
+CSV_FILE = "example_csv_table.csv"
 
 PROGRAM_CACHE = Cache(FNAME)
 # Function which either gets data from cache or creates new get request, then returns data
@@ -37,43 +38,40 @@ for a_tag in a_tags_list:
     crawl_links.append(link)
 
 count = 0
-pres_info_list = []
-# iterate through list of crawl_links
+pres_data_list = []
+# iterate through list of crawl_links and scrape president data from fact sheet and append data to list
 for link in crawl_links:
     pres_dict = {}
-    if count >= 45:
-        break
-    else:
-        # get scraped data from cache or get request to site
-        crawl_page = scrape_function(link)
-        # make BeautifulSoup object from page
-        crawl_soup = BeautifulSoup(crawl_page, features="lxml")
-        #get the FUll Name of a pres and add to pres dict
-        pres_name = crawl_soup.find("h2", {"class": "president-name"}).text
-        pres_dict['pres_full_name'] = pres_name
-        # target pres. facts wrapper element
-        facts_wrapper = crawl_soup.find("div", {"class": "fast-facts-wrapper"})
-        # iterate over all the divs in the class 'data'
-        for div in facts_wrapper.find_all('div', {'class': 'data'}):
-            #get the label tag
-            label_text = div.label.text
-            #get the info in the label's sibiling div and slipt on newlines-- this makes a list of the info in the div
-            pres_info = div.label.next_sibling.next_sibling.text.split('\n')
-            #iterate through the div list and grab only the items with text and pass on newlines
-            for item in pres_info:
-                if len(item) == 0:
-                    pass
-                else:
-                    pres_dict[label_text] = item
-        pres_info_list.append(pres_dict)
-    count +=1
-header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' 'Inagural Date', 'Religon', 'Career', 'Party']
+    # get scraped data from cache or get request to site
+    crawl_page = scrape_function(link)
+    # make BeautifulSoup object from page
+    crawl_soup = BeautifulSoup(crawl_page, features="lxml")
+    #get the FUll Name of a pres and add to pres dict
+    pres_name = crawl_soup.find("h2", {"class": "president-name"}).text
+    pres_dict['pres_full_name'] = pres_name
+    # target pres. facts wrapper element
+    facts_wrapper = crawl_soup.find("div", {"class": "fast-facts-wrapper"})
+    # iterate over all the divs in the class 'data'
+    for div in facts_wrapper.find_all('div', {'class': 'data'}):
+        #get the label tag
+        label_text = div.label.text
+        #get the info in the label's sibiling div and slipt on newlines-- this makes a list of the info in the div
+        pres_data = div.label.next_sibling.next_sibling.text.split('\n')
+        #iterate through the div list and grab only the items with text and pass on newlines
+        for item in pres_data:
+            if len(item) == 0:
+                pass
+            else:
+                pres_dict[label_text] = item
+    pres_data_list.append(pres_dict)
 
-#write a CSV file with president data-- if data not present write 'N/A'
-with open("example_csv_table.csv", "w", newline="") as example_fh:
+HEADER = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inagural Date', 'Religon', 'Career', 'Party']
+
+#write a CSV file with president data from pres data list-- if data no present write 'N/A'
+with open(CSV_FILE, "w", newline="") as example_fh:
     writer = csv.writer(example_fh)
-    writer.writerow(header)
-    for pres_dic in pres_info_list:
+    writer.writerow(HEADER)
+    for pres_dic in pres_data_list:
         pn = pres_dic['President Number']
         name = pres_dic['pres_full_name']
         full_name = name.split()
