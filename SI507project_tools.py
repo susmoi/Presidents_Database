@@ -65,26 +65,26 @@ for link in crawl_links:
                 pres_dict[label_text] = item
     pres_data_list.append(pres_dict)
 
-HEADER = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inagural Date', 'Religon', 'Career', 'Party']
-
-#write a CSV file with president data from pres data list-- if data no present write 'N/A'
-with open(CSV_FILE, "w", newline="") as example_fh:
-    writer = csv.writer(example_fh)
-    writer.writerow(HEADER)
-    for pres_dic in pres_data_list:
-        pn = pres_dic['President Number']
-        name = pres_dic['pres_full_name']
-        full_name = name.split()
-        ln = full_name[-1]
-        fn = full_name[0]
-        bd = pres_dic['Birth Date']
-        id = pres_dic['Inauguration Date']
-        try:
-            ed = pres_dic['Education']
-        except:
-            ed = 'N/A'
-        rel = pres_dic['Religion']
-        car = pres_dic['Career']
-        par = pres_dic['Political Party']
-        row = [pn, ln, fn, bd, ed, id, rel, car, par]
-        writer.writerow(row)
+def make_pres_csv(list_of_dicts):
+    header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inagural Date', 'Religon', 'Career', 'Party']
+    with open(CSV_FILE, "w", newline="") as example_fh:
+        writer = csv.writer(example_fh)
+        writer.writerow(header)
+        for single_dict in list_of_dicts:
+            pn = single_dict['President Number']
+            name = single_dict['pres_full_name']
+            full_name = name.split()
+            ln = full_name[-1]
+            fn = full_name[0]
+            bd = single_dict['Birth Date']
+            id = single_dict['Inauguration Date']
+            try:
+                ed = single_dict['Education']
+            except:
+                ed = 'N/A'
+            rel = single_dict['Religion']
+            car = single_dict['Career']
+            par = single_dict['Political Party']
+            row = [pn, ln, fn, bd, ed, id, rel, car, par]
+            writer.writerow(row)
+    return row
