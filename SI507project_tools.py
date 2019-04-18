@@ -66,7 +66,7 @@ for link in crawl_links:
     pres_data_list.append(pres_dict)
 
 def make_pres_csv(list_of_dicts):
-    header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inagural Date', 'Religon', 'Career', 'Party']
+    header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
     with open(CSV_FILE, "w", newline="") as example_fh:
         writer = csv.writer(example_fh)
         writer.writerow(header)
