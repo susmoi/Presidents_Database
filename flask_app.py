@@ -17,9 +17,13 @@ def create_tables():
     db.create_all()
     populate_data_into_db(list_of_class_pres)
 
-@app.route('/form1')
-def form1():
-return render_template('form1.html')
+@app.route('/')
+def homepage():
+    return render_template('home-route.html')
+
+@app.route('/table')
+def table():
+    return render_template('table.html', result =list_of_class_pres)
 # Set up Flask debug stuff
 
 if __name__ == '__main__':
