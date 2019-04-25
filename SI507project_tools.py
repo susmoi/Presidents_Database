@@ -1,6 +1,5 @@
 import os
 import requests
-import csv
 import json
 from bs4 import BeautifulSoup
 from advanced_expiry_caching import Cache
@@ -44,7 +43,8 @@ for a_tag in a_tags_list:
     crawl_links.append(link)
 
 count = 0
-pres_data_list = []
+pres_data_list = [] #list is a dict. Each dict-- Key is label text, Value is facts_wrapper_div text
+
 # iterate through list of crawl_links and scrape president data from fact sheet and append data to list
 for link in crawl_links:
     pres_dict = {}
@@ -58,17 +58,18 @@ for link in crawl_links:
     # target pres. facts wrapper element
     facts_wrapper = crawl_soup.find("div", {"class": "fast-facts-wrapper"})
     # iterate over all the divs in the class 'data'
-    for div in facts_wrapper.find_all('div', {'class': 'data'}):
-        #get the label tag
-        label_text = div.label.text
-        #get the info in the label's sibiling div and slipt on newlines-- this makes a list of the info in the div
-        pres_data = div.label.next_sibling.next_sibling.text.split('\n')
-        #iterate through the div list and grab only the items with text and pass on newlines
-        for item in pres_data:
-            if len(item) == 0:
+    for facts_wrapper_div in facts_wrapper.find_all('div', {'class': 'data'}):
+        #get the label tag TEXT and label tag sibling TEXT
+        label_text = facts_wrapper_div.label.text #['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
+        pres_data_text_list = facts_wrapper_div.label.next_sibling.next_sibling.text.split('\n') #this makes a list of the info in the div
+
+        #iterate through the pres_data list and seperate TEXT from \n (newlines)
+        for text in pres_data_text_list:
+            if len(text) == 0:
                 pass
             else:
-                pres_dict[label_text] = item
+                pres_dict[label_text] = text #Key is label text, Value is facts_wrapper_div text
+
     pres_data_list.append(pres_dict)
 
 class US_President:
@@ -84,37 +85,33 @@ class US_President:
         self.par = list[8]
 
     def __str__(self):
-        return f"{self.fn} {self.ln} was the number {self.pn} President of the United States of America and they represented the {self.par} party. They were born on {self.bd} and recieved an education from {self.ed}. Their career before becoming president was {self.car}. They were inaugurated on {self.id}. They're religion was/is {self.rel}."
+        return f"{self.fn} {self.ln} was the number {self.pn} President of the United States of America and they represented the {self.par} party. They were born on {self.bd} and recieved an education from {self.ed}. Their career before becoming president was {self.car}. They were inaugurated on {self.id}. Their religion was/is {self.rel}."
 
-list_of_class_pres = []
-def make_pres_csv(list_of_dicts):
-    header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
-    with open(CSV_FILE, "w", newline="") as example_fh:
-        writer = csv.writer(example_fh)
-        writer.writerow(header)
-        for single_dict in list_of_dicts:
-            pn = single_dict['President Number']
-            name = single_dict['pres_full_name']
-            full_name = name.split()
-            ln = full_name[-1]
-            fn = full_name[0]
-            bd = single_dict['Birth Date']
-            id = single_dict['Inauguration Date']
-            try:
-                ed = single_dict['Education']
-            except:
-                ed = 'N/A'
-            rel = single_dict['Religion']
-            car = single_dict['Career']
-            par = single_dict['Political Party']
-            row = [pn, ln, fn, bd, ed, id, rel, car, par]
-            writer.writerow(row)
-            pres = US_President(row) #pres is an instance of the President Class
-            # print(pres)
-            list_of_class_pres.append(pres)
+list_of_class_pres = [] #Contains list of US_President objects
+
+def make_pres_list(list_of_dicts):
+    #['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
+    for single_dict in list_of_dicts:
+        pn = single_dict['President Number']
+        name = single_dict['pres_full_name']
+        full_name = name.split()
+        ln = full_name[-1]
+        fn = full_name[0]
+        bd = single_dict['Birth Date']
+        id = single_dict['Inauguration Date']
+        try:
+            ed = single_dict['Education']
+        except:
+            ed = 'N/A'
+        rel = single_dict['Religion']
+        car = single_dict['Career']
+        par = single_dict['Political Party']
+        row = [pn, ln, fn, bd, ed, id, rel, car, par]
+        pres = US_President(row) #pres is an instance of US_President Class
+        list_of_class_pres.append(pres)
     return list_of_class_pres
 
-make_pres_csv(pres_data_list)
+make_pres_list(pres_data_list) #creates a list of US_President objects
 
 def populate_data_into_db(list):
     for pres_list_item in list:
