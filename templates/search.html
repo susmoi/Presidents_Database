@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {% for US_pres in list_of_class_pres %}
+      {% if US_pres.ln == lname %}
+      <h1>{{ US_pres.fn }}</h1>
+      <h1>{{ US_pres.ln }}</h1>
+      <p>{{ US_pres }}</p>
+      {% endif %}
+    {% endfor %}
+
+
+  </body>
+</html>
