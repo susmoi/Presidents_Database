@@ -109,7 +109,7 @@ def make_pres_csv(list_of_dicts):
             par = single_dict['Political Party']
             row = [pn, ln, fn, bd, ed, id, rel, car, par]
             writer.writerow(row)
-            pres = US_President(row)
+            pres = US_President(row) #pres is an instance of the President Class
             # print(pres)
             list_of_class_pres.append(pres)
     return list_of_class_pres
@@ -120,25 +120,3 @@ def populate_data_into_db(list):
     for pres_list_item in list:
         new_pres = President(pres_class=pres_list_item, id=1)
         new_pres.save_to_db()
-    print ('finished!')
-
-# with open(CSV_FILE, 'r') as fh:
-#     reader = csv.reader(fh)
-#     for row in reader:
-#         print ('yurp')
-#
-#
-
-# class President(db.Model):
-#     __tablename__ = "presidents"
-#     id = db.Column(db.Integer, primary_key=True)
-#     # ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
-#     pres_num = db.Column(db.String(64))
-#     last_name = db.Column(db.String(64))
-#     first_name = db.Column(db.String(64))
-#     birthday = db.Column(db.String(64))
-#     inagural_day = db.Column(db.String(64))
-#     career = db.Column(db.String(64))
-#     party = db.Column(db.String(64))
-#     education_id = db.Column(db.Integer, db.ForeignKey("education.id"))
-#     religion_id = db.Column(db.Integer,db.ForeignKey("religion.id"))
