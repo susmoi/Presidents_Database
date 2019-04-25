@@ -17,6 +17,19 @@
          <th>   Career   </th>
          <th>   Party   </th>
       </tr>
+      {% for pres in list_of_class_pres %}
+          <tr>
+             <td> {{ pres.pn }} </td>
+             <td> {{ pres.ln }} </td>
+             <td> {{ pres.fn }} </td>
+             <td> {{ pres.bd }} </td>
+             <td> {{ pres.ed }} </td>
+             <td> {{ pres.id }} </td>
+             <td> {{ pres.rel }} </td>
+             <td> {{ pres.car }} </td>
+             <td> {{ pres.par }} </td>
+          </tr>
+           {% endfor %}
 
       </table>
   </body>
