@@ -19,12 +19,17 @@ def create_tables():
 
 @app.route('/')
 def homepage():
-    return render_template('home-route.html')
+    return render_template('home-route.html',list_of_class_pres=list_of_class_pres)
 
 @app.route('/table')
 def table():
-    return render_template('table.html', result =list_of_class_pres)
-# Set up Flask debug stuff
+    return render_template('table.html', list_of_class_pres=list_of_class_pres)
+
+@app.route('/search/<fname>/<lname>')
+def search(fname, lname):
+    return render_template('search.html',fname=fname,lname=lname, list_of_class_pres=list_of_class_pres)
+
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True) # This will create database in current directory, as set up, if it doesn't exist, but won't overwrite if you restart - so no worries about that
