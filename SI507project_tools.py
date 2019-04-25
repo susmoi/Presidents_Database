@@ -1,10 +1,15 @@
 import os
 import requests
 import csv
+import json
 from bs4 import BeautifulSoup
 from advanced_expiry_caching import Cache
 from flask import Flask, render_template, session, redirect, url_for # tools that will make it easier to build on things
-from flask_sqlalchemy import SQLAlchemy # handles database stuff for us - need to pip install flask_sqlalchemy in your virtual env, environment, etc to use this and run this
+# from flask_sqlalchemy import SQLAlchemy # handles database stuff for us - need to pip install flask_sqlalchemy in your virtual env, environment, etc to use this and run this
+from db import db
+from db_models import President
+
+
 
 #Constants
 FNAME = "example_json_file.json"
@@ -13,6 +18,7 @@ CSV_FILE = "example_csv_table.csv"
 
 PROGRAM_CACHE = Cache(FNAME)
 # Function which either gets data from cache or creates new get request, then returns data
+
 def scrape_function(some_url):
     # print ("getting data")
     data = PROGRAM_CACHE.get_data(some_url)
@@ -65,6 +71,22 @@ for link in crawl_links:
                 pres_dict[label_text] = item
     pres_data_list.append(pres_dict)
 
+class US_President:
+    def __init__(self, list):
+        self.pn = list[0]
+        self.ln = list[1]
+        self.fn = list[2]
+        self.bd = list[3]
+        self.ed = list[4]
+        self.id = list[5]
+        self.rel = list[6]
+        self.car = list[7]
+        self.par = list[8]
+
+    def __str__(self):
+        return f"{self.fn} {self.ln} was the number {self.pn} President of the United States of America and they represented the {self.par} party. They were born on {self.bd} and recieved an education from {self.ed}. Their career before becoming president was {self.car}. They were inaugurated on {self.id}. They're religion was/is {self.rel}."
+
+list_of_class_pres = []
 def make_pres_csv(list_of_dicts):
     header = ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
     with open(CSV_FILE, "w", newline="") as example_fh:
@@ -87,4 +109,36 @@ def make_pres_csv(list_of_dicts):
             par = single_dict['Political Party']
             row = [pn, ln, fn, bd, ed, id, rel, car, par]
             writer.writerow(row)
-    return row
+            pres = US_President(row)
+            # print(pres)
+            list_of_class_pres.append(pres)
+    return list_of_class_pres
+
+make_pres_csv(pres_data_list)
+
+def populate_data_into_db(list):
+    for pres_list_item in list:
+        new_pres = President(pres_class=pres_list_item, id=1)
+        new_pres.save_to_db()
+    print ('finished!')
+
+# with open(CSV_FILE, 'r') as fh:
+#     reader = csv.reader(fh)
+#     for row in reader:
+#         print ('yurp')
+#
+#
+
+# class President(db.Model):
+#     __tablename__ = "presidents"
+#     id = db.Column(db.Integer, primary_key=True)
+#     # ['President Number', 'Last Name', 'First Name', 'Birthday', 'Education' ,'Inaugural Date', 'Religion', 'Career', 'Party']
+#     pres_num = db.Column(db.String(64))
+#     last_name = db.Column(db.String(64))
+#     first_name = db.Column(db.String(64))
+#     birthday = db.Column(db.String(64))
+#     inagural_day = db.Column(db.String(64))
+#     career = db.Column(db.String(64))
+#     party = db.Column(db.String(64))
+#     education_id = db.Column(db.Integer, db.ForeignKey("education.id"))
+#     religion_id = db.Column(db.Integer,db.ForeignKey("religion.id"))
