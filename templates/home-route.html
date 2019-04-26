@@ -6,15 +6,18 @@
   </head>
   <body>
     <div class="text-container">
+      <a href="education">Education Table</a>
+      <a href="religion">Religion Table</a>
+
       <h1>Welcome to the Presidential Database</h1>
       <p>Below you'll find a list of all of the US Presidents</p><br>
       <h2>To search by President</h2>
-      <p>add '/search/' + the full name of any president</p><br>
-      <p>you can copy and paste a name from the list and plug it into the URL after adding '/search/' to the end of the URL</p>
+      <p>Copy and paste from the list, plug it in after the URL, and press enter!</p>
 
       {% for pres in list_of_class_pres %}
         <h3> {{ "/search/"+pres.fn + "/" + pres.ln }} </h3>
       {% endfor %}
+
     </div>
   </body>
 </html>
