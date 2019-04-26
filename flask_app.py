@@ -6,7 +6,7 @@ from SI507project_tools import *
 # Application configurations
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./presidents_database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./presidents_database_sample.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.secret_key = 'adgsdfsadfdflsdfsj'
 
