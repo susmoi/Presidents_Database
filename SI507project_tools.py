@@ -6,7 +6,7 @@ from advanced_expiry_caching import Cache
 from flask import Flask, render_template, session, redirect, url_for # tools that will make it easier to build on things
 # from flask_sqlalchemy import SQLAlchemy # handles database stuff for us - need to pip install flask_sqlalchemy in your virtual env, environment, etc to use this and run this
 from db import db
-from db_models import President
+from db_models import President, Religon, Education
 
 
 
@@ -100,7 +100,8 @@ def make_pres_list(list_of_dicts):
         bd = single_dict['Birth Date']
         id = single_dict['Inauguration Date']
         try:
-            ed = single_dict['Education']
+            x = single_dict['Education']
+            ed = x.split(",")[0]
         except:
             ed = 'N/A'
         rel = single_dict['Religion']
@@ -113,7 +114,35 @@ def make_pres_list(list_of_dicts):
 
 make_pres_list(pres_data_list) #creates a list of US_President objects
 
+rel_dict = {}
+
+ed_dict = {}
+
+
+for prez in list_of_class_pres:
+    rel_count = 1
+    ed_count = 1
+    if prez.rel in rel_dict:
+        pass
+    else:
+        rel_dict[prez.rel] = rel_count
+        rel_count+=1
+
+    if prez.ed in ed_dict:
+        pass
+    else:
+        ed_dict[prez.ed] = ed_count
+        ed_count+=1
+# print(education_list)
+
 def populate_data_into_db(list):
+
+    for ed,num in ed_dict.items():
+        new_ed = Education(ed_item=ed)
+        new_ed.save_to_db()
+    for rel, num in rel_dict.items():
+        new_rel = Religon(rel_item=rel)
+        new_rel.save_to_db()
     for pres_list_item in list:
-        new_pres = President(pres_class=pres_list_item, id=1)
+        new_pres = President(pres_class=pres_list_item, educ_dic=ed_dict,reli_dic=rel_dict)
         new_pres.save_to_db()
