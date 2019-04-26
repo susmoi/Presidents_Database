@@ -29,6 +29,13 @@ def table():
 def search(fname, lname):
     return render_template('search.html',fname=fname,lname=lname, list_of_class_pres=list_of_class_pres)
 
+@app.route("/religion")
+def religion_table():
+    return render_template('religion.html', rel_dict=rel_dict)
+
+@app.route("/education")
+def education_table():
+    return render_template('education.html', ed_dict=ed_dict)
 
 
 if __name__ == '__main__':
