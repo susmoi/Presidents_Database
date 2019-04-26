@@ -15,6 +15,7 @@
       <p>Copy and paste from the list, plug it in after the URL, and press enter!</p>
 
       {% for pres in list_of_class_pres %}
+        <h2>{{ pres.fn + " " + pres.ln  }}</h2>
         <h3> {{ "/search/"+pres.fn + "/" + pres.ln }} </h3>
       {% endfor %}
 
