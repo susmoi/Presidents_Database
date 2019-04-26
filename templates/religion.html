@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <table border="1">
+      <tr>
+        <th>Name</th>
+      </tr>
+      {% for rel in rel_dict %}
+      <tr>
+
+          <td>{{ rel }}</td>
+        {% endfor %}
+      </tr>
+
+    </table>
+
+  </body>
+</html>
